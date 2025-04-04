@@ -2,11 +2,15 @@
   "name": "my-cap-app",
   "version": "1.0.0",
   "description": "A simple CAP project.",
-  "repository": "https://github.com/vijeyalakshmi/my-cap-app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vijeyalakshmi/my-cap-app.git"
+  },
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
     "@sap/cds": "^8.9.1",
+    "@sap/cds-dk": "^8.9.1",
     "@sap/xssec": "^3.3.0",
     "express": "^4"
   },
@@ -16,7 +20,17 @@
     "mocha": "^11.1.0"
   },
   "scripts": {
-    "start": "cds run",
+    "start": "node gen/srv/server.js",
     "test": "mocha test/basic.test.js"
-  }
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/vijeyalakshmi/my-cap-app/issues"
+  },
+  "homepage": "https://github.com/vijeyalakshmi/my-cap-app#readme"
 }
