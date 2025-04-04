@@ -2,11 +2,11 @@
   "name": "my-cap-app",
   "version": "1.0.0",
   "description": "A simple CAP project.",
-  "repository": "<Add your repository here>",
+  "repository": "https://github.com/vijeyalakshmi/my-cap-app",
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@sap/cds": "^7.4.3",
+    "@sap/cds": "^8.9.1",
     "@sap/xssec": "^3.3.0",
     "express": "^4"
   },
