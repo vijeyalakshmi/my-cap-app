@@ -1,72 +1,47 @@
-name: SAP BTP CI/CD Pipeline
+name: CI/CD Pipeline for SAP CAP App
 
 on:
   push:
     branches:
-      - main # Triggers the pipeline when changes are pushed to the main branch
+      - main   # Trigger on pushes to main branch
+  pull_request:
+    branches:
+      - main   # Trigger on pull requests to main branch
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   # Use the latest Ubuntu environment
 
     steps:
-      # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Check out code
+      uses: actions/checkout@v2   # Checkout the repo's code
 
-      # Step 2: Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14' # Use Node.js version 14 (recommended for CAP)
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'   # Set up Node.js environment
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
-        run: |
-          npm install
+    - name: Install dependencies
+      run: npm install   # Install your project dependencies
 
-      # Step 4: Build CAP application
-      - name: Build CAP application
-        run: |
-          cds build
+    - name: Run Selenium Tests
+      run: |
+        npm install selenium-webdriver   # Install Selenium if not already in package.json
+        npm run test:selenium   # Run Selenium tests (make sure you have a script in package.json)
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
+    - name: Run JMeter Tests
+      run: |
+        wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.1.tgz  # Download JMeter
+        tar -xvzf apache-jmeter-5.4.1.tgz   # Extract the JMeter binary
+        cd apache-jmeter-5.4.1/bin
+        ./jmeter -n -t /path/to/your/test-plan.jmx -l result.jtl   # Replace with the correct path to your JMeter test plan
 
-    steps:
-      # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Build the App
+      run: npm run build   # Build the app (if needed)
 
-      # Step 2: Install Cloud Foundry CLI
-      - name: Install Cloud Foundry CLI
-        run: |
-          curl -sL https://github.com/cloudfoundry/cli/releases/download/v7.4.0/cf-cli_7.4.0_linux_x86-64.tar.gz | tar -zxvf -
-          sudo mv cf /usr/local/bin
-
-      # Step 3: Log in to SAP BTP Cloud Foundry
-      - name: Log in to SAP BTP Cloud Foundry
-        run: |
-          echo $SAP_CF_API | cf login -a https://api.cf.us10.hana.ondemand.com -u $SAP_CF_USERNAME -p $SAP_CF_PASSWORD --skip-ssl-validation
-
-      # Step 4: Deploy application to SAP BTP
-      - name: Deploy application to SAP BTP
-        run: |
-          cf push my-cap-app --no-start
-          cf start my-cap-app
-
-  test:
-    needs: deploy
-    runs-on: ubuntu-latest
-
-    steps:
-      # Step 1: Install testing dependencies (e.g., Jest or another test framework)
-      - name: Install testing dependencies
-        run: |
-          npm install --save-dev jest
-
-      # Step 2: Run automated tests
-      - name: Run tests
-        run: |
-          npm test
+    - name: Deploy to SAP BTP (Optional)
+      if: github.ref == 'refs/heads/main'  # Only deploy when pushed to main
+      run: |
+        echo "Deploying to SAP BTP..."
+        # Add your SAP BTP deployment commands here, for example:
+        # cf push my-cap-app
