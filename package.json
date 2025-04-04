@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "cds build --production",
-    "start": "cds run",
+    "start": "cds run --in-memory?",
     "test": "mocha test/basic.test.js"
   },
   "main": "index.js",
