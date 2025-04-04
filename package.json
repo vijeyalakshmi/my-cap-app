@@ -20,7 +20,7 @@
     "mocha": "^11.1.0"
   },
   "scripts": {
-    "start": "node gen/srv/server.js",
+    "start": "cds run",
     "test": "mocha test/basic.test.js"
   },
   "main": "index.js",
