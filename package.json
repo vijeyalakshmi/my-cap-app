@@ -20,6 +20,7 @@
     "mocha": "^11.1.0"
   },
   "scripts": {
+    "build": "cds build --production",
     "start": "cds run",
     "test": "mocha test/basic.test.js"
   },
@@ -32,5 +33,19 @@
   "bugs": {
     "url": "https://github.com/vijeyalakshmi/my-cap-app/issues"
   },
-  "homepage": "https://github.com/vijeyalakshmi/my-cap-app#readme"
+  "homepage": "https://github.com/vijeyalakshmi/my-cap-app#readme",
+  "cds": {
+    "build": {
+      "target": "gen",
+      "tasks": [
+        {
+          "for": "node-cf",
+          "src": "srv",
+          "options": {
+            "copy": true
+          }
+        }
+      ]
+    }
+  }
 }

@@ -1,0 +1,12 @@
+applications:
+  - name: my-cap-app
+    memory: 256M
+    stack: cflinuxfs4
+    instances: 1
+    path: .
+    buildpacks:
+      - nodejs_buildpack
+    routes:
+      - route: my-cap-app-viji.cfapps.us10-001.hana.ondemand.com
+    env:
+      SAP_HANA_CLOUD: true
