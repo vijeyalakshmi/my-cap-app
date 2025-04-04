@@ -6,7 +6,8 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@sap/cds": "^8",
+    "@sap/cds": "^7.4.3",
+    "@sap/xssec": "^3.3.0",
     "express": "^4"
   },
   "devDependencies": {
@@ -15,7 +16,7 @@
     "mocha": "^11.1.0"
   },
   "scripts": {
-    "start": "cds-serve",
+    "start": "cds run",
     "test": "mocha test/basic.test.js"
   }
 }
