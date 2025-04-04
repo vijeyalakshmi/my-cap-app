@@ -3,10 +3,10 @@ name: CI/CD Pipeline for SAP CAP App
 on:
   push:
     branches:
-      - main   # Trigger on pushes to main branch
+      - main   # Trigger on pushes to the main branch
   pull_request:
     branches:
-      - main   # Trigger on pull requests to main branch
+      - main   # Trigger on pull requests to the main branch
 
 jobs:
   build:
@@ -27,15 +27,17 @@ jobs:
     - name: Build the App
       run: npm run build   # Build the app (if needed)
 
-    - name: Start the App Locally (Optional - For testing the build step)
+    - name: Log in to SAP BTP Cloud Foundry
       run: |
-        npm run start &
-        sleep 20  # Wait for the app to start before continuing (adjust as necessary)
-        curl --fail http://localhost:4004 || exit 1  # Test if the app is running correctly
+        echo "Logging into SAP BTP Cloud Foundry..."
+        cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }} -o cb583b6btrial -s development
+      env:
+        CF_API: ${{ secrets.CF_API }}
+        CF_USERNAME: ${{ secrets.CF_USERNAME }}
+        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
 
-    - name: Deploy to SAP BTP (Only on main branch)
+    - name: Deploy to SAP BTP
       if: github.ref == 'refs/heads/main'  # Only deploy when pushed to main
       run: |
         echo "Deploying to SAP BTP..."
-        # Ensure you have a manifest.yml file and that you are logged in to SAP BTP
-        cf push my-cap-app  # Replace with actual deployment command
+        cf push my-cap-app  # Replace with actual deployment command if needed
