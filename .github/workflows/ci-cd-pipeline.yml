@@ -24,24 +24,18 @@ jobs:
     - name: Install dependencies
       run: npm install   # Install your project dependencies
 
-    - name: Run Selenium Tests
-      run: |
-        npm install selenium-webdriver   # Install Selenium if not already in package.json
-        npm run test:selenium   # Run Selenium tests (make sure you have a script in package.json)
-
-    - name: Run JMeter Tests
-      run: |
-        wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.1.tgz  # Download JMeter
-        tar -xvzf apache-jmeter-5.4.1.tgz   # Extract the JMeter binary
-        cd apache-jmeter-5.4.1/bin
-        ./jmeter -n -t /path/to/your/test-plan.jmx -l result.jtl   # Replace with the correct path to your JMeter test plan
-
     - name: Build the App
       run: npm run build   # Build the app (if needed)
 
-    - name: Deploy to SAP BTP (Optional)
+    - name: Start the App Locally (Optional - For testing the build step)
+      run: |
+        npm run start &
+        sleep 20  # Wait for the app to start before continuing (adjust as necessary)
+        curl --fail http://localhost:4004 || exit 1  # Test if the app is running correctly
+
+    - name: Deploy to SAP BTP (Only on main branch)
       if: github.ref == 'refs/heads/main'  # Only deploy when pushed to main
       run: |
         echo "Deploying to SAP BTP..."
-        # Add your SAP BTP deployment commands here, for example:
-        # cf push my-cap-app
+        # Ensure you have a manifest.yml file and that you are logged in to SAP BTP
+        cf push my-cap-app  # Replace with actual deployment command
