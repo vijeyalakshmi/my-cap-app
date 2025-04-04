@@ -1,0 +1,72 @@
+name: SAP BTP CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main # Triggers the pipeline when changes are pushed to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # Use Node.js version 14 (recommended for CAP)
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          npm install
+
+      # Step 4: Build CAP application
+      - name: Build CAP application
+        run: |
+          cds build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Install Cloud Foundry CLI
+      - name: Install Cloud Foundry CLI
+        run: |
+          curl -sL https://github.com/cloudfoundry/cli/releases/download/v7.4.0/cf-cli_7.4.0_linux_x86-64.tar.gz | tar -zxvf -
+          sudo mv cf /usr/local/bin
+
+      # Step 3: Log in to SAP BTP Cloud Foundry
+      - name: Log in to SAP BTP Cloud Foundry
+        run: |
+          echo $SAP_CF_API | cf login -a https://api.cf.us10.hana.ondemand.com -u $SAP_CF_USERNAME -p $SAP_CF_PASSWORD --skip-ssl-validation
+
+      # Step 4: Deploy application to SAP BTP
+      - name: Deploy application to SAP BTP
+        run: |
+          cf push my-cap-app --no-start
+          cf start my-cap-app
+
+  test:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Install testing dependencies (e.g., Jest or another test framework)
+      - name: Install testing dependencies
+        run: |
+          npm install --save-dev jest
+
+      # Step 2: Run automated tests
+      - name: Run tests
+        run: |
+          npm test
